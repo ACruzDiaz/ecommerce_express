@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import settings from '../helpers/configurarion.js';
 import path from 'path';
 class mCart  {
 
@@ -32,7 +33,7 @@ class mCart  {
       }
       const objectData = JSON.parse(readData);
       objectData.push({id,products})
-      const data = await fs.writeFile(mCart.cartPath, JSON.stringify(objectData));
+      const data = await fs.writeFile(mCart.cartPath, JSON.stringify(objectData, null, settings.SPACE));
       return data;
     } catch (error) {
         throw error;
@@ -50,20 +51,15 @@ class mCart  {
         throw new Error("Error no hay carro. Crea un carrito primero");
       }
 
-      const objectData = JSON.parse(readData);
+      const actualData = JSON.parse(readData);
 
-      const agregar = ( pid, cartObj, newP)=>{
+      const agregarFn = ( pid, cartObj, newP)=>{
         let newArrayP = [];
-
         const arrayP = cartObj.products;
-        if(!Array.isArray(arrayP)){
-          console.log("ArrayP no es un array valido");
-          return;
-        }
-        const productF = arrayP.filter(product => product.id === pid)
+        const productF = arrayP.filter(product => product.id === pid);
+
         if(productF.length === 0){
-          newArrayP = [newP, ...arrayP]
-          console.log(newArrayP);
+          newArrayP = [{id:pid, ...newP}, ...arrayP]
         }else if(productF.length > 0){
           const filterAll = arrayP.filter(product => product.id !== pid)
           newArrayP = [{...productF[0], quantity: productF[0].quantity + newP.quantity}, ...filterAll]
@@ -72,14 +68,16 @@ class mCart  {
 
       }
 
-      const result = objectData.map((cart) => {
+      const result = actualData.map((cart) => {
         if(cart.id === cid){
-            const cartData = agregar(pid, cart, product)
+            const cartData = agregarFn(pid, cart, product)
             return cartData
+        }else{
+          return cart;
         }
       })
       
-      const data = await fs.writeFile(mCart.cartPath, JSON.stringify(result));
+      const data = await fs.writeFile(mCart.cartPath, JSON.stringify(result, null, settings.SPACE));
       return data;
     } catch (error) {
         throw error;

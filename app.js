@@ -6,9 +6,6 @@ import rCarts from "./src/routes/rCarts.js"
 const app = express();
 const PORT = 8080;
 
-
-
-
 app.use(express.json())
 app.get('/', function (req, res) {
   res.send('<h1>Bienvenido<h1>')

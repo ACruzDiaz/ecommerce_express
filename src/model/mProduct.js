@@ -1,5 +1,4 @@
-import { json } from 'express';
-import { write } from 'fs';
+import  settings  from '../helpers/configurarion.js';
 import fs from 'fs/promises';
 import path from 'path';
 export default class mProduct  {
@@ -14,23 +13,22 @@ export default class mProduct  {
         throw new Error("No existen productos.");
       }
       const dataJson = JSON.parse(data);
-
       const productpid = dataJson.filter(product => product.id === pid); //Asegurarnos que sean strings
 
-      if( productpid.length === 0 || !productpid.products){
+      if( productpid.length === 0 || !productpid){
         throw new Error("El product ID es incorrecto"); 
       }
 
       return productpid;
 
     } catch (error) {
-      console.log('Error en mProducts');
       throw error;
     }finally{ 
       await filehandle.close();
   }
   }
   async getAll(){
+
     let filehandle;
     try {
       filehandle = await fs.open(mProduct.productPath, 'r');
@@ -40,6 +38,10 @@ export default class mProduct  {
       }
 
       const dataJson = await JSON.parse(data);
+      if(dataJson.length===0){
+        throw new Error("No existen productos");
+        
+      }
       return dataJson;
 
     }catch (err) {
@@ -58,19 +60,46 @@ export default class mProduct  {
         readData = '[]';
       }
       const actualProducts = JSON.parse(readData);
-      const updatedProducts = JSON.stringify([newProduct, ...actualProducts]);
+      const updatedProducts = JSON.stringify([newProduct, ...actualProducts], null, settings.SPACE);
       const writeData = await fs.writeFile(mProduct.productPath,  updatedProducts );
       return writeData;
     } catch (error) {
-      console.log(error);
       throw error;
     }finally{
       await filehandle.close();
     }
   }
+  async update(pid, newProduct){
+    let filehandle;
+    try {
+      filehandle = await fs.open(mProduct.productPath, 'a');
+      let readData = await fs.readFile(mProduct.productPath, { encoding: 'utf8' });
+      if(readData.length === 0){
+        throw new Error("No existen datos para editar en el documento productos");
+      }
+      const dataJson = JSON.parse(readData);
+      if(dataJson.length === 0){
+        throw new Error("No existen productos para editar");
+      }
+      const newProducts = dataJson.map((product) =>{
+        if(product.id === pid){
+          return {...product, ...newProduct}
+        }else{
+          return product;
+        }
+      })
 
+      const writeData = await fs.writeFile(mProduct.productPath,  JSON.stringify(newProducts, null, settings.SPACE));
+
+      return writeData;
+    } catch (error) {
+      throw error;
+      
+    }finally{
+      await filehandle.close();
+    }
+  }
   async delete(pid){
-    console.log(pid);
     let filehandle;
     try {
         filehandle = await fs.open(mProduct.productPath, 'a');
@@ -85,7 +114,7 @@ export default class mProduct  {
           
         }
 
-        const updatedProducts = JSON.stringify(deleteProduct);
+        const updatedProducts = JSON.stringify(deleteProduct, null, settings.SPACE);
 
         const writeData = await fs.writeFile(mProduct.productPath,  updatedProducts );
         return writeData;
@@ -93,7 +122,7 @@ export default class mProduct  {
     }catch(error){
       throw(error)
     }finally{
-      await filehandle.close()
+      await filehandle.close();
     }
   }
 }

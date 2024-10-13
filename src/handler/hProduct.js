@@ -1,5 +1,5 @@
 import mProduct from '../model/mProduct.js';
-import validateLength from '../middleware/validateLength.js';
+import mwValidate from '../middleware/mwValidate.js'
 export default class hProduct {
   constructor(req, res){
     this.req = req;
@@ -12,14 +12,11 @@ export default class hProduct {
     try {
       //Abrir el archivo product y leerlo
       const data = await product.get(pid);
-      this.res.status(200).json(data.products);
+      this.res.status(200).json(data);
 
     } catch (error) {
       this.res.status(400).send(error.message);
     }
-
-    
-
   }
   async getAll(){
     const product = new mProduct();
@@ -28,16 +25,17 @@ export default class hProduct {
       this.res.status(200).json(result);
 
     } catch (error) {
-      this.res.status(400).send(error.message)
+      this.res.status(400).send(error.message);
     }
   }
   async add(){
     const product = new mProduct();
-    
+    const validateIns = new mwValidate();
     try {
       const id = crypto.randomUUID();
       const reqData = this.req.body;
       //Validación
+      await validateIns.product(reqData);
       //Revisar que el codigo del articulo no este repetido(opcional)
       //Generar ID
       const newProduct = {id, ...reqData};
@@ -48,7 +46,27 @@ export default class hProduct {
       }
 
     } catch (err) {
-      this.res.status(400).send("Error al intentar agregar el producto")
+      this.res.status(400).send(err.message)
+    }
+  }
+
+  async update(){
+    const pid = this.req.params.pid;
+    const newProduct = this.req.body;
+    const product = new mProduct();
+    const validateIns = new mwValidate();
+    try {
+      //validar datos
+      await validateIns.product(newProduct);
+      await product.get(pid)
+      const result = await product.update(pid, newProduct);
+      if(result === undefined){
+        this.res.status(200).send("Producto actualizado correctamente");
+
+      }
+    } catch (error) {
+      this.res.status(400).send(error.message);
+      
     }
   }
   async delete(){

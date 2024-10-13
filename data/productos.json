@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "id": "327aede4-f75f-4c24-917b-9ced321a4a3d",
+    "title": "Pelota",
+    "description": "Pelota redonda",
+    "code": "ADSASDF",
+    "price": 12.2,
+    "status": true,
+    "stock": 10,
+    "category": "Deportes",
+    "thumbnails": [
+      "imagen-1",
+      "imagen-2"
+    ]
+  },
+  {
+    "id": "2f782b56-1ea7-486c-80c6-3a36302770ca",
+    "title": "Pelotsa",
+    "description": "Pelota redonda",
+    "code": "NONO",
+    "price": 12.2,
+    "status": true,
+    "stock": 10,
+    "category": "Deportes",
+    "thumbnails": [
+      "imagen-1",
+      "imagen-2"
+    ]
+  }
+]
