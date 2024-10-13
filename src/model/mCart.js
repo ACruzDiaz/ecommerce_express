@@ -6,17 +6,19 @@ class mCart  {
 
   static cartPath = path.resolve('data/carrito.json');
 
-  async get(){
+  async get(cid){
     let filehandle;
     try {
       filehandle = await fs.open(mCart.cartPath, 'r');
-      const data = await fs.readFile(mCart.cartPath, { encoding: 'utf8' });//probar si jala
-      
-      if(data.length === 0){
-        throw new Error("No existen carros.");
+      const data = await fs.readFile(mCart.cartPath, { encoding: 'utf8' });
+      const dataJson = JSON.parse(data);
+
+      const productcid = dataJson.filter(cartid => cartid.id === cid);
+      if(productcid.length === 0){
+        throw new Error("El carrito ID es incorrecto"); 
       }
-      
-      return JSON.parse(data);
+
+      return productcid[0].products;
     } catch (error) {
       throw error;
     }finally{ 

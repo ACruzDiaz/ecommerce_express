@@ -12,19 +12,9 @@ class hCart {
     const carrito = new mCart();
     try {
       //Abrir el archivo Carrito y leerlo
-      const data = await carrito.get();
-      //Buscar el carrito ${cid}
-      const productcid = data.filter(cartid => cartid.id === cid);
-      //guardar el array 'products'
-      //usar el metodo res para mandar el array al cliente
-      if(productcid.length === 0){
-        throw new Error("El carrito ID es incorrecto"); 
-      }
+      const data = await carrito.get(cid);
 
-      if(!productcid[0].products || productcid[0].products.length === 0){
-        throw new Error("No hay productos en el carrito")
-      }
-      this.res.status(200).json(productcid[0].products);
+      this.res.status(200).json(data);
 
     } catch (error) {
       this.res.status(400).send(error.message);
@@ -56,8 +46,10 @@ class hCart {
     try {
       //Validar
       await validateInst.cartProduct(product);
-      //Validar si los pid existen en el archivo de productos (primero programar mProductos)
+      //Validar si los pid existen en el archivo de productos
       await modelProd.get(pid);
+      //Validaar si el cid existe
+      await model.get(cid);
       const mAdd = await model.add(product, cid, pid);
       if(mAdd === undefined){
         this.res.status(200).send("Productos añadidos al carrito")

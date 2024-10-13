@@ -8,12 +8,12 @@ export default class mProduct  {
     let filehandle;
     try {
       filehandle = await fs.open(mProduct.productPath, 'r');
-      const data = await fs.readFile(mProduct.productPath, { encoding: 'utf8' });//probar si jala
+      const data = await fs.readFile(mProduct.productPath, { encoding: 'utf8' });
       if(data.length === 0){
         throw new Error("No existen productos.");
       }
       const dataJson = JSON.parse(data);
-      const productpid = dataJson.filter(product => product.id === pid); //Asegurarnos que sean strings
+      const productpid = dataJson.filter(product => product.id === pid);
 
       if( productpid.length === 0 || !productpid){
         throw new Error("El product ID es incorrecto"); 
@@ -32,16 +32,13 @@ export default class mProduct  {
     let filehandle;
     try {
       filehandle = await fs.open(mProduct.productPath, 'r');
-      const data = await fs.readFile(mProduct.productPath, { encoding: 'utf8' });//probar si jala
+      const data = await fs.readFile(mProduct.productPath, { encoding: 'utf8' });
       if(data.length === 0){
         throw new Error("No existen productos.");
       }
 
       const dataJson = await JSON.parse(data);
-      if(dataJson.length===0){
-        throw new Error("No existen productos");
-        
-      }
+
       return dataJson;
 
     }catch (err) {
@@ -55,7 +52,7 @@ export default class mProduct  {
     let filehandle;
     try {
       filehandle = await fs.open(mProduct.productPath, 'a');
-      let readData = await fs.readFile(mProduct.productPath, { encoding: 'utf8' });//probar si jala
+      let readData = await fs.readFile(mProduct.productPath, { encoding: 'utf8' });
       if(readData.length === 0){
         readData = '[]';
       }
@@ -103,7 +100,7 @@ export default class mProduct  {
     let filehandle;
     try {
         filehandle = await fs.open(mProduct.productPath, 'a');
-        let readData = await fs.readFile(mProduct.productPath, { encoding: 'utf8' });//probar si jala
+        let readData = await fs.readFile(mProduct.productPath, { encoding: 'utf8' });
         if(readData.length === 0){
           throw new Error("No existen datos en el documento productos");
         }
