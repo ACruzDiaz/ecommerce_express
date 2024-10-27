@@ -1,5 +1,8 @@
 import mProduct from '../model/mProduct.js';
-import mwValidate from '../middleware/mwValidate.js'
+import mwValidate from '../middleware/mwValidate.js';
+import io from '../../app.js';
+
+
 export default class hProduct {
   constructor(req, res){
     this.req = req;
@@ -40,6 +43,16 @@ export default class hProduct {
       //Generar ID
       const newProduct = {id, ...reqData};
       const result = await product.add(newProduct);
+      // const send = await product.getAll();
+      // io.on('connection', (socket)=>{
+      //   console.log('hProduct');
+      //   socket.emit('products',send )
+      //   socket.on('disconnect', () => {
+      //     console.log('user disconnected');
+      //   });
+      // })
+
+
 
       if(result === undefined){
         this.res.status(200).send("Producto agregado");

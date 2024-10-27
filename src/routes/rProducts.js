@@ -1,5 +1,5 @@
 import { Router } from "express";
-import hProduct from "../handler/hProduct.js"
+import hProduct from "../handler/hProduct.js";
 const route = Router();
 
 const PATH = '/api/products'
@@ -16,8 +16,10 @@ route.get(`${PATH}`, (req,res)=>{
 route.post(`${PATH}`, (req, res)=>{
   const product = new hProduct(req,res);
   product.add();
+
+
 });
-//Pendiente opcion para hacer update
+
 route.put(`${PATH}/:pid`, (req,res)=>{
   const product = new hProduct(req,res);
   product.update();

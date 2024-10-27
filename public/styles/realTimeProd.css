@@ -1,0 +1,15 @@
+main.register{
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  gap: 1rem;
+}
+form#productsForm{
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  input{
+    margin-bottom: 0.5rem;
+  }
+}

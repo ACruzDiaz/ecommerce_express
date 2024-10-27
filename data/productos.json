@@ -1,30 +1,122 @@
 [
   {
-    "id": "327aede4-f75f-4c24-917b-9ced321a4a3d",
-    "title": "Pelota",
-    "description": "Pelota redonda",
-    "code": "ADSASDF",
-    "price": 12.2,
+    "id": "c62155b2-05f3-4e0f-a114-b95d6fc8b8c9",
+    "title": "Post Creado con Strapi",
+    "description": "Este es un post  creado con strapi",
+    "code": "coder.emilio.415d",
+    "price": 4,
     "status": true,
-    "stock": 10,
-    "category": "Deportes",
-    "thumbnails": [
-      "imagen-1",
-      "imagen-2"
-    ]
+    "stock": 4,
+    "category": "nosag"
   },
   {
-    "id": "2f782b56-1ea7-486c-80c6-3a36302770ca",
-    "title": "Pelotsa",
-    "description": "Pelota redonda",
-    "code": "NONO",
-    "price": 12.2,
+    "id": "098706c3-6d51-4284-8964-6921da07ad6e",
+    "title": "Post Creado con Strapi",
+    "description": "Este es un post  creado con strapi",
+    "code": "coder.emilio.415d",
+    "price": 4,
     "status": true,
-    "stock": 10,
-    "category": "Deportes",
-    "thumbnails": [
-      "imagen-1",
-      "imagen-2"
-    ]
+    "stock": 4,
+    "category": "nosag"
+  },
+  {
+    "id": "d3cf6fe8-f2d7-4ba5-b8cc-e0c25ce89810",
+    "title": "Post Creado con Strapi",
+    "description": "Este es un post  creado con strapi",
+    "code": "coder.emilio.415d",
+    "price": 4,
+    "status": true,
+    "stock": 4,
+    "category": "nosag"
+  },
+  {
+    "id": "f8eba4f7-8a0a-437f-b25b-5598035eeb7a",
+    "title": "Post Creado con Strapi",
+    "description": "Este es un post  creado con strapi",
+    "code": "coder.emilio.415d",
+    "price": 4,
+    "status": true,
+    "stock": 4,
+    "category": "4"
+  },
+  {
+    "id": "9ae8322d-fb91-4afc-9e73-e6ede46b2f4c",
+    "title": "Post Creado con Strapi",
+    "description": "Este es un post  creado con strapi",
+    "code": "coder.emilio.415d",
+    "price": 4,
+    "status": true,
+    "stock": 4,
+    "category": "4"
+  },
+  {
+    "id": "c7ca03e8-d18f-405c-8328-83c36e068ad0",
+    "title": "Post Creado con Strapi",
+    "description": "Este es un post  creado con strapi",
+    "code": "coder.emilio.415d",
+    "price": 4,
+    "status": true,
+    "stock": 4,
+    "category": "4"
+  },
+  {
+    "id": "133ff9da-b83c-4d2b-9d39-070654531dc4",
+    "title": "Post Creado con Strapi",
+    "description": "Este es un post  creado con strapi",
+    "code": "coder.emilio.415d",
+    "price": 4,
+    "status": true,
+    "stock": 4,
+    "category": "4"
+  },
+  {
+    "id": "df52611f-e2a9-47cb-b470-3b2d3d8edabb",
+    "title": "Post Creado con Strapi",
+    "description": "Este es un post  creado con strapi",
+    "code": "coder.emilio.415d",
+    "price": 4,
+    "status": true,
+    "stock": 4,
+    "category": "4"
+  },
+  {
+    "id": "0dcea7fb-146c-4b33-a65d-5678aa516066",
+    "title": "Post Creado con Strapi",
+    "description": "Este es un post  creado con strapi",
+    "code": "coder.emilio.415d",
+    "price": 4,
+    "status": true,
+    "stock": 4,
+    "category": "4"
+  },
+  {
+    "id": "637850f9-0ba2-4125-a829-d66765b3ec69",
+    "title": "El reloj de plata",
+    "description": "Este es un post  creado con strapi",
+    "code": "coder.emilio.415d",
+    "price": 1,
+    "status": true,
+    "stock": 123,
+    "category": "23"
+  },
+  {
+    "id": "973380d0-1a79-43b4-af10-ace04d5f9716",
+    "title": "Reloj",
+    "description": "Es de oro",
+    "code": "32132",
+    "price": 12,
+    "status": true,
+    "stock": 12,
+    "category": "Joyeria"
+  },
+  {
+    "id": "f418c5bf-9bfb-4e96-b303-fbd57926c072",
+    "title": "Reloj",
+    "description": "Es de oro",
+    "code": "32132",
+    "price": 12,
+    "status": true,
+    "stock": 12,
+    "category": "Joyeria"
   }
 ]
