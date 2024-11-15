@@ -2,30 +2,29 @@ import { Router } from "express";
 import hProduct from "../handler/hProduct.js";
 const route = Router();
 
-const PATH = '/api/products'
-route.get(`${PATH}/:pid`, (req,res)=>{
+
+route.get(`/:pid`, (req,res)=>{
   const product = new hProduct(req,res);
   product.get();
 }); 
 
-route.get(`${PATH}`, (req,res)=>{
+route.get(`/`, (req,res)=>{
   const product = new hProduct(req,res);
   product.getAll();
 });
 
-route.post(`${PATH}`, (req, res)=>{
+route.post(`/`, (req, res)=>{
   const product = new hProduct(req,res);
   product.add();
 
-
 });
 
-route.put(`${PATH}/:pid`, (req,res)=>{
+route.put(`/:pid`, (req,res)=>{
   const product = new hProduct(req,res);
   product.update();
 }); 
 
-route.delete(`${PATH}/:pid`, (req, res)=>{
+route.delete(`/:pid`, (req, res)=>{
   const product = new hProduct(req,res);
   product.delete();
 })

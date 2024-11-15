@@ -1,23 +1,33 @@
 import  {app}  from './src/server/expressServer.js'
 import { Server } from "socket.io";
 import mProduct from './src/model/mProduct.js'
+import mongo from './src/mongoose/config.js';
+import hProduct from './src/handler/hProduct.js';
+
 
 const PORT = 8080;
 
+
+mongo.connect();
 const server = app.listen(PORT, ()=>{
   console.log(`Server online at http://localhost:${PORT}`);
 })
 
 const io = new Server(server);
 
+
 io.on('connection', (socket) => {
   console.log(io.engine.clientsCount, 'user connected');
   socket.on('update', async (req)=>{
-    const mpro = new mProduct()
+
     try {
-      const products = await mpro.getAll()
+      const allProducts = await fetch('http://localhost:8080/api/products/')
+      .then((res)=>{
+        return res.json()
+      }
+    )
+      const products = allProducts.payload
       socket.emit('productos',products )
-      console.log(req);
     } catch (error) {
       console.log(error);
     }

@@ -1,0 +1,40 @@
+{{>layout}}
+<main class="register">
+  <section id="pagination">
+  <div class="productTable">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Código</th>
+        <th>Precio</th>
+        <th>Estatus</th>
+        <th>Stock</th>
+        <th>Categoría</th>
+        <th>Cantidad</th>
+      </tr>
+    </thead>
+    <tbody id="mainTable">
+    {{#each allProducts}}
+      <tr id="insertTable">
+        <th>{{@index}}</th>
+        <th>{{this.code._id}}</th>
+        <th>{{this.code.title}}</th>
+        <th>{{this.code.description}}</th>
+        <th>{{this.code.code}}</th>
+        <th>{{this.code.price}}</th>
+        <th>{{this.code.status}}</th>
+        <th>{{this.code.stock}}</th>
+        <th>{{this.code.category}}</th>
+        <th>{{this.quantity}}</th>
+
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+  </div>
+  </section>
+</main>

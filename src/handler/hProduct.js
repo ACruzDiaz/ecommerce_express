@@ -1,6 +1,7 @@
-import mProduct from '../model/mProduct.js';
+import productModel from '../model/mProduct.js'
 import mwValidate from '../middleware/mwValidate.js';
 import io from '../../app.js';
+import cartModel from '../model/mCart.js';
 
 
 export default class hProduct {
@@ -11,92 +12,161 @@ export default class hProduct {
 
   async get (){
     const pid = this.req.params.pid;
-    const product = new mProduct();
     try {
-      //Abrir el archivo product y leerlo
-      const data = await product.get(pid);
-      this.res.status(200).json(data);
+      const data = await productModel.findOne({_id:pid}).lean()
+      if(data){
+
+        this.res.status(200).json(data);
+      }else{
+        throw new Error(`El producto ${pid} no existe en la base de datos`);
+      }
 
     } catch (error) {
-      this.res.status(400).send(error.message);
+      this.res.status(400).json({message: error.message});
     }
   }
   async getAll(){
-    const product = new mProduct();
+    let result;
+    let filters = {}
+    let {limit, page, sort, query, categoria, disponibilidad} = this.req.query
+    const fullUrl = this.req.protocol + '://' + this.req.get('host') + this.req.originalUrl;
+
     try {
-      const result = await product.getAll();
-      this.res.status(200).json(result);
+
+
+
+      //El siguiente paso es hacer coincider el formato del objeto devuelto con el que se pide en las diapositivas.
+      
+      limit || 10
+      page || 1 
+
+      categoria && (filters.category = categoria);
+      disponibilidad && (filters.status = disponibilidad);
+      query && (filters.title = query);
+      const sortOpt = (sort == 'asc' || sort == 'desc') ? {price : sort}: {}
+      
+      limit = Number(limit)
+      page = Number(page)
+      result = await productModel.paginate(filters, {limit, page, lean:true, sort:sortOpt})
+      if(result){
+        result.status = 'success'
+        result.prevLink =  result.hasPrevPage ? replaceQuery(fullUrl, 'page', result.page, result.prevPage) : null
+        result.nextLink = result.hasNextPage ? replaceQuery(fullUrl, 'page', result.page, result.nextPage) : null
+        result.payload = result.docs
+        delete result.docs
+        delete result.totalDocs
+        delete result.pagingCounter
+        delete result.limit
+        this.res.status(200).json(result);
+      }else{
+        throw new Error("No se encontraron productos");
+      }
 
     } catch (error) {
-      this.res.status(400).send(error.message);
+      this.res.status(400).json({
+        message: error.message,
+        status: error 
+      });
     }
   }
   async add(){
-    const product = new mProduct();
     const validateIns = new mwValidate();
+    const reqData = this.req.body;
     try {
-      const id = crypto.randomUUID();
-      const reqData = this.req.body;
       //Validación
       await validateIns.product(reqData);
-      //Revisar que el codigo del articulo no este repetido(opcional)
-      //Generar ID
-      const newProduct = {id, ...reqData};
-      const result = await product.add(newProduct);
-      // const send = await product.getAll();
-      // io.on('connection', (socket)=>{
-      //   console.log('hProduct');
-      //   socket.emit('products',send )
-      //   socket.on('disconnect', () => {
-      //     console.log('user disconnected');
-      //   });
-      // })
+      const newProduct = {...reqData};
+      const result = new productModel( newProduct)
+      const isSaved = await result.save()
 
-
-
-      if(result === undefined){
-        this.res.status(200).send("Producto agregado");
+      if(isSaved){
+        this.res.status(200).json({message: `El producto con id ${isSaved._id} ha sido registrado en la base de datos.`});
       }
 
     } catch (err) {
-      this.res.status(400).send(err.message)
+      this.res.status(400).json({message:err.message})
     }
   }
 
   async update(){
     const pid = this.req.params.pid;
     const newProduct = this.req.body;
-    const product = new mProduct();
     const validateIns = new mwValidate();
     try {
       //validar datos
       await validateIns.product(newProduct);
-      await product.get(pid)
-      const result = await product.update(pid, newProduct);
-      if(result === undefined){
-        this.res.status(200).send("Producto actualizado correctamente");
+
+      const fone = await productModel.findOneAndUpdate({
+        _id : pid,
+      },
+      {
+        title: newProduct.title,
+        description: newProduct.description,
+        code: newProduct.code,
+        price: newProduct.price,
+        status: newProduct.status,
+        stock: newProduct.stock,
+        category: newProduct.category
+      },
+      {
+        new: true
+      }
+
+      )
+      if(fone){
+        this.res.status(200).json({message: `Producto ${pid} actualizado correctamente`});
 
       }
     } catch (error) {
-      this.res.status(400).send(error.message);
+      this.res.status(400).json({message: error.message});
       
     }
   }
   async delete(){
     const pid = this.req.params.pid;
 
-    const product = new mProduct();
     try {
-      const deleteModel = await product.delete(pid);
+      const deleteModel = await productModel.findOneAndDelete(
+        {
+          _id : pid
+        },
+      )
 
-      if(deleteModel === undefined){
-        this.res.status(200).send(`Articulo ${pid} borrado exitosamente`)
+      if(deleteModel){
+        const deleteEmpty = await cartModel.updateMany(
+          { 
+          },
+          {
+            $pull:{
+              productos:{
+                code:pid
+              }
+            }
+          })  
+  
+          console.log(deleteEmpty);
+        this.res.status(200).json({message:`Articulo ${pid} borrado exitosamente`})
+      }else{
+        throw new Error("El producto no existe");
+        
       }
     } catch (error) {
-      this.res.status(400).send(`Error al intentar borrar el producto ${pid}`)
+      this.res.status(400).json({message: `Error al intentar borrar el producto ${pid}`})
     }
   }
 }
+
+
+const replaceQuery = (url, query, oldValue, newValue)=>{
+  let newQuery;
+  url.includes('http://localhost:8080/api/products') 
+  ? newQuery = `http://localhost:8080/api/products/?${query}=${newValue}` 
+  : newQuery = String(url).replace(`${query}=${oldValue}`, `${query}=${newValue}`)
+  return newQuery
+  
+}
+
+
 const producto = {
   id:'Se autogenera',
   title: "Pelota",

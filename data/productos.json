@@ -1,15 +1,5 @@
 [
   {
-    "id": "c62155b2-05f3-4e0f-a114-b95d6fc8b8c9",
-    "title": "Post Creado con Strapi",
-    "description": "Este es un post  creado con strapi",
-    "code": "coder.emilio.415d",
-    "price": 4,
-    "status": true,
-    "stock": 4,
-    "category": "nosag"
-  },
-  {
     "id": "098706c3-6d51-4284-8964-6921da07ad6e",
     "title": "Post Creado con Strapi",
     "description": "Este es un post  creado con strapi",
@@ -41,16 +31,6 @@
   },
   {
     "id": "9ae8322d-fb91-4afc-9e73-e6ede46b2f4c",
-    "title": "Post Creado con Strapi",
-    "description": "Este es un post  creado con strapi",
-    "code": "coder.emilio.415d",
-    "price": 4,
-    "status": true,
-    "stock": 4,
-    "category": "4"
-  },
-  {
-    "id": "c7ca03e8-d18f-405c-8328-83c36e068ad0",
     "title": "Post Creado con Strapi",
     "description": "Este es un post  creado con strapi",
     "code": "coder.emilio.415d",

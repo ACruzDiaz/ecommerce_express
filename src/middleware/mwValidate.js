@@ -109,18 +109,3 @@ export default class mwValidate {
   
 }
 
-// const producto = {
-//   title: "Pelota",
-//   description: "Pelota redonda",
-//   code: "ADSASDF",
-//   price: 12.20,
-//   status: true,
-//   stock: 10,
-//   category: "Deportes",
-//   // thumbnails: ["imagen-1", "imagen-2"] //Este campo es opcional
-// }
-
-// const cartProducto = {
-// 	id: "dfsfd",
-// 	quantity: 9
-// }

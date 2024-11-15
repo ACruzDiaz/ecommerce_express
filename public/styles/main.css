@@ -1,0 +1,32 @@
+main.register{
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  gap: 1rem;
+}
+form#productsForm{
+  section#deleteProduct{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem 0.5rem;
+  }
+  section#addProduct{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem 0.5rem;
+  }
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 1rem;
+  input{
+    margin-bottom: 0.5rem;
+  }
+}
+
+section#pagination{
+  background-color: blanchedalmond;
+}
