@@ -5,7 +5,7 @@ let cid = null;
 const message = (title, res)=>{
   sw.fire({
     title: title,
-    text: res.statusText
+    text: res
   })
 }
 const insertProducts = (productArray)=>{
@@ -199,15 +199,23 @@ document.addEventListener("DOMContentLoaded", ()=>{
         title,description,code,price,status,stock,category
       })
     }
+
     fetch(URL_SERVER + 'products', options).then((res)=>{
-      if (!res.ok){
-        message("Error", res)  
+      if(!res.ok){
+        return res.json().then(errorData =>{
+          throw new Error(errorData.message);
+        })
       }
-      else{
-        socket.emit('update','true')
-      }
-    }).catch(err => sw.fire(err))
-    _productsForm.reset();
+      _productsForm.reset();
+      socket.emit('update','true')
+      return res.json()
+
+    }).then((data)=>{
+      message('Nuevo producto creado', data.message)
+    })
+    .catch((err)=>{
+      message('Error',err.message)
+    })
   })
 
   _delete && _delete.addEventListener('click', (e)=>{
@@ -216,18 +224,25 @@ document.addEventListener("DOMContentLoaded", ()=>{
       method:"DELETE",
     }
     const pid = _pid.value;
-
+    if (_pid.value === "") {
+      message('Error', 'ValidationError: El campo Product ID esta vácio.')
+      return
+    }
     fetch(URL_SERVER + 'products/' + pid, options)
       .then((res)=>{
         if (!res.ok) {
-          message('Error', res)
-        }else{
-          socket.emit('update','true')
+          return res.json().then(errorData => {
+            throw new Error(errorData.message)
+          })
         }
+        socket.emit('update','true')
+        return res.json()
         })
+      .then((data)=>{
+        message('Producto eliminado', data.message)
+      })
       .catch((err)=>{
-        sw.fire('Unexpected Error'); 
-        console.log(err);
+        message('Error al eliminar producto', err.message)
       })
 
     _pid.value = '';

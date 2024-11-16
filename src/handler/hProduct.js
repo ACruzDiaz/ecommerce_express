@@ -84,7 +84,7 @@ export default class hProduct {
       }
 
     } catch (err) {
-      this.res.status(400).json({message:err.message})
+      this.res.status(500).json({message:err.message})
     }
   }
 
@@ -144,9 +144,9 @@ export default class hProduct {
             }
           })  
   
-          console.log(deleteEmpty);
         this.res.status(200).json({message:`Articulo ${pid} borrado exitosamente`})
       }else{
+        console.log('Errorrr');
         throw new Error("El producto no existe");
         
       }
