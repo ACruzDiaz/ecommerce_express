@@ -1,8 +1,6 @@
-import  {app}  from './src/server/expressServer.js'
+import  {app}  from './server/expressServer.js'
 import { Server } from "socket.io";
-import mProduct from './src/model/mProduct.js'
-import mongo from './src/mongoose/config.js';
-import hProduct from './src/handler/hProduct.js';
+import mongo from './mongoose/config.js';
 
 
 const PORT = 8080;
@@ -21,13 +19,13 @@ io.on('connection', (socket) => {
   socket.on('update', async (req)=>{
 
     try {
-      const allProducts = await fetch('http://localhost:8080/api/products/')
-      .then((res)=>{
-        return res.json()
-      }
-    )
-      const products = allProducts.payload
-      socket.emit('productos',products )
+    //   const allProducts = await fetch('http://localhost:8080/api/products/')
+    //   .then((res)=>{
+    //     return res.json()
+    //   }
+    // )
+    //   const products = allProducts.payload
+    //   socket.emit('productos',products )
     } catch (error) {
       console.log(error);
     }

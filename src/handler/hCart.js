@@ -3,56 +3,46 @@ import mwValidate from '../middleware/mwValidate.js';
 import productModel from '../model/mProduct.js';
 
 class hCart {
-  constructor(req, res){
-    this.req = req;
-    this.res = res;
-  }
 
-  async get (){
-    const cid = this.req.params.cid;
+  static async get (req,res){
+    const cid = req.params.cid;
     try {
-      
       const data = await cartModel.findOne({_id: cid}).populate('productos.code').lean()
       
       if(data){
-        this.res.status(200).json(data)
+        res.status(200).json(data)
       }else{
         throw new Error(`Error al encontrar el carrito: ${cid}, asegurese de que el carrito esta registrado.`)
       }
-      //Delete Empty
-
 
     } catch (error) {
-      error.message ? this.res.status(400).json({message: error.message}) : this.res.status(400).json({message: "Unexpected Error"})
+      error.message ? res.status(400).json({message: error.message}) : res.status(400).json({message: "Unexpected Error"})
     }
   }
 
-  async create(){
+  static async create(req,res){
     try {
       const newCart = new cartModel({productos:[]});
       const isSaved = await newCart.save();
       if(isSaved){
-        this.res.status(200).json({message: `Carrito con id ${isSaved._id}, creado correctamente.`, id: isSaved._id})
+        res.status(200).json({message: `Carrito con id ${isSaved._id}, creado correctamente.`, id: isSaved._id})
       }else{
         throw new Error("Error al crear el carrito. Por favor intente nuevamente");
         
       }
 
     } catch (error) {
-        this.res.status(500).json({message: error.message})
+        res.status(500).json({message: error.message})
     }
 
   }
 
-  async add(){
-    const cid = this.req.params.cid;
-    const pid = this.req.params.pid;
-    const quantity = this.req.body
-    const validateInst = new mwValidate();
+  static async add(req,res){
+    const cid = req.params.cid;
+    const pid = req.params.pid;
+    const quantity = 1;
 
     try {
-      await validateInst.cartProduct(quantity);
-
       const productToAdd = await productModel.findById(pid);
       if(productToAdd === null){
         throw new Error('El producto no existe la base de datos')
@@ -78,7 +68,7 @@ class hCart {
           },
           {
             $inc: {
-              'productos.$[elem].quantity': quantity.quantity
+              'productos.$[elem].quantity': quantity
             },
           },
           {
@@ -92,7 +82,7 @@ class hCart {
           {
             $push: {
               productos: {
-                quantity: quantity.quantity,
+                quantity: quantity,
                 code: pid,
               }
             }
@@ -103,18 +93,36 @@ class hCart {
           }
         );
       }
-      this.res.status(200).json({message:`Se han agregado ${quantity.quantity} unidades de ${productToAdd.title} al carrito ${cid}`});
+      res.status(200).json({message:`Se han agregado ${quantity} unidades de ${productToAdd.title} al carrito ${cid}`});
 
     } catch (error) {
-      this.res.status(400).json({message: error.message})
+      res.status(400).json({message: error.message})
     }
   }
 
-  async deleteOneProduct(){
-    const cid = this.req.params.cid
-    const pid = this. req.params.pid
+  static async deleteOneProduct(req,res){
+    const cid = req.params.cid
+    const pid = req.params.pid
     try {
-      //Queda pendiente asegurarnos si el producto existia en el carrito antes de borrarlo
+      const productExist = await cartModel.findOne(
+        { 
+          _id : cid,
+          'productos.code': pid 
+
+        },
+        {
+
+        },
+        {
+          arrayFilters: [{ 'elem.code': pid }],
+          new : true,
+        }
+      );        
+
+      if(!productExist){
+        throw new Error(`Error al eliminar el producto ${pid}. Revise que el producto se encuentre en su carrito.`); 
+
+      }
       const fone = await cartModel.findOneAndUpdate(
         { 
           _id : cid,
@@ -132,41 +140,57 @@ class hCart {
         {
           new : true,
         })
-        
-      this.res.status(200).json({message:`Se ha borrado ${pid} del carrito ${cid}`});
+      if(!fone){
+
+        throw new Error(`Error al eliminar el producto ${pid}. Revise que el carrito exista.`); 
+      }
+      res.status(200).json({message:`Se ha borrado ${pid} del carrito ${cid}`});
         
     } catch (error) {
-      this.res.status(400).json({message: error.message})
+      res.status(400).json({message: error.message})
       
     }
   }
 
-  async updateManyProducts(){
-    const cid = this.req.params.cid
-    const arrayProducts = this.req.body
+  static async updateManyProducts(req,res){
+    const cid = req.params.cid
+    const arrayProducts = req.body
+    const validar = new mwValidate()
+
     try {
-     const cartExist = await cartModel.findById(cid);
-     if(!cartExist){
-      throw new Error(`El carrito ${cid} no existe.`);
-     }
+      //Validación de la integridad de los datos
+      validar.updateMany(arrayProducts)
+      const cartExist = await cartModel.findById(cid);
+      //Validación de la existencia de los productos en la BD
+      for (const element of arrayProducts) {
+        const prodExist = await productModel.findById(element.code)
+        console.log(prodExist);
+        if(!prodExist){
+          throw new Error(`El producto ${element.code} no existe en la base de datos`);
+        }
+      }
+      //Validación de la existencia del carrito
+      if(!cartExist){
+        throw new Error(`El carrito ${cid} no existe.`);
+      }
 
-     const actualCart = new cartModel(cartExist)
-     actualCart.productos = arrayProducts
-     const isSaved = await actualCart.save();
-     if(!isSaved){
-      throw new Error("Error al guardar los cambios.");
-     }
-     this.res.status(200).json({message:`El carrito ${cid} se actualizó correctamente`});
+      const actualCart = new cartModel(cartExist);
+      actualCart.productos = arrayProducts;
 
+      const isSaved = await actualCart.save();
+      if(!isSaved){
+        throw new Error("Error al guardar los cambios.");
+      }
+      res.status(200).json({message:`El carrito ${cid} se actualizó correctamente`});
 
     } catch (error) {
-      this.res.status(400).json({message: error.message})
+      res.status(400).json({message: error.message})
       
     }
   }
 
-  async deleteAll(){
-    const cid = this.req.params.cid
+  static async deleteAll(req,res){
+    const cid = req.params.cid
 
     try {
       const findCart = await cartModel.findById(cid) 
@@ -177,11 +201,11 @@ class hCart {
       const isSaved = await updatedCart.save()
       if(!isSaved) throw new Error("Error al actualizar el carrito. Intente de nuevo.");
 
-     this.res.status(200).json({message:`El carrito ${cid} se vació correctamente`});
+      res.status(200).json({message:`El carrito ${cid} se vació correctamente`});
       
 
     } catch (error) {
-      this.res.status(400).json({message: error.message})
+      res.status(400).json({message: error.message})
       
     }
   }

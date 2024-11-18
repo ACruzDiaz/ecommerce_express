@@ -1,42 +1,31 @@
 import productModel from '../model/mProduct.js'
 import mwValidate from '../middleware/mwValidate.js';
-import io from '../../app.js';
 import cartModel from '../model/mCart.js';
 
 
 export default class hProduct {
-  constructor(req, res){
-    this.req = req;
-    this.res = res;
-  }
-
-  async get (){
-    const pid = this.req.params.pid;
+  static async get (req, res){
+    const pid = req.params.pid;
     try {
       const data = await productModel.findOne({_id:pid}).lean()
-      if(data){
-
-        this.res.status(200).json(data);
+      if(data ){
+        res.status(200).json(data);
       }else{
         throw new Error(`El producto ${pid} no existe en la base de datos`);
       }
 
     } catch (error) {
-      this.res.status(400).json({message: error.message});
+      res.status(400).json({message: error.message});
     }
   }
-  async getAll(){
+  static async getAll(req,res){
     let result;
     let filters = {}
-    let {limit, page, sort, query, categoria, disponibilidad} = this.req.query
-    const fullUrl = this.req.protocol + '://' + this.req.get('host') + this.req.originalUrl;
+    let {limit, page, sort, query, categoria, disponibilidad} = req.query
+    const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 
     try {
 
-
-
-      //El siguiente paso es hacer coincider el formato del objeto devuelto con el que se pide en las diapositivas.
-      
       limit || 10
       page || 1 
 
@@ -57,40 +46,47 @@ export default class hProduct {
         delete result.totalDocs
         delete result.pagingCounter
         delete result.limit
-        this.res.status(200).json(result);
+        res.status(200).json(result);
       }else{
         throw new Error("No se encontraron productos");
       }
 
     } catch (error) {
-      this.res.status(400).json({
+      res.status(400).json({
         message: error.message,
         status: error 
       });
     }
   }
-  async add(){
+  static async add(req, res){
     const validateIns = new mwValidate();
-    const reqData = this.req.body;
+    const reqData = req.body;
     try {
-      //Validación
+      //Validación de integridad de datos
       await validateIns.product(reqData);
+
+      //Validar que el producto no exista en la BD
+      const findProduct = await productModel.findOne({code: reqData.code})
+      if(findProduct){
+        throw new Error("El producto ya se encuentra registrado en la base de datos.");
+        
+      }
       const newProduct = {...reqData};
-      const result = new productModel( newProduct)
+      const result = new productModel(newProduct)
       const isSaved = await result.save()
 
       if(isSaved){
-        this.res.status(200).json({message: `El producto con id ${isSaved._id} ha sido registrado en la base de datos.`});
+        res.status(200).json({message: `El producto con id ${isSaved._id} ha sido registrado en la base de datos.`});
       }
 
     } catch (err) {
-      this.res.status(500).json({message:err.message})
+      res.status(400).json({message:err.message})
     }
   }
 
-  async update(){
-    const pid = this.req.params.pid;
-    const newProduct = this.req.body;
+  static async update(req, res){
+    const pid = req.params.pid;
+    const newProduct = req.body;
     const validateIns = new mwValidate();
     try {
       //validar datos
@@ -114,16 +110,16 @@ export default class hProduct {
 
       )
       if(fone){
-        this.res.status(200).json({message: `Producto ${pid} actualizado correctamente`});
+        res.status(200).json({message: `Producto ${pid} actualizado correctamente`});
 
       }
     } catch (error) {
-      this.res.status(400).json({message: error.message});
+      res.status(400).json({message: error.message});
       
     }
   }
-  async delete(){
-    const pid = this.req.params.pid;
+  static async delete(req, res){
+    const pid = req.params.pid;
 
     try {
       const deleteModel = await productModel.findOneAndDelete(
@@ -144,14 +140,13 @@ export default class hProduct {
             }
           })  
   
-        this.res.status(200).json({message:`Articulo ${pid} borrado exitosamente`})
+        res.status(200).json({message:`Articulo ${pid} borrado exitosamente`})
       }else{
-        console.log('Errorrr');
         throw new Error("El producto no existe");
         
       }
     } catch (error) {
-      this.res.status(400).json({message: `Error al intentar borrar el producto ${pid}`})
+      res.status(400).json({message: `Error al intentar borrar el producto ${pid}`})
     }
   }
 }
@@ -167,14 +162,14 @@ const replaceQuery = (url, query, oldValue, newValue)=>{
 }
 
 
-const producto = {
-  id:'Se autogenera',
-  title: "Pelota",
-  description: "Pelota redonda",
-  code: "ADSASDF",
-  price: 12.20,
-  status: true,
-  stock: 10,
-  category: "Deportes",
-  thumbnails: ["imagen-1", "imagen-2"] //Este campo es opcional
-}
+// const producto = {
+//   id:'Se autogenera',
+//   title: "Pelota",
+//   description: "Pelota redonda",
+//   code: "ADSASDF",
+//   price: 12.20,
+//   status: true,
+//   stock: 10,
+//   category: "Deportes",
+//   thumbnails: ["imagen-1", "imagen-2"] //Este campo es opcional
+// }

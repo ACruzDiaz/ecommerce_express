@@ -1,7 +1,7 @@
 import express from "express";
 import rProducts from "../routes/rProducts.js"
 import rCarts from "../routes/rCarts.js"
-import vProducts from "../views/vProducts.js"
+import rViewProducts from "../routes/rViewProducts.js"
 const app = express();
 
 app.set('case sensitive routing', true);
@@ -13,7 +13,7 @@ app.route('/')
   res.send('<h1>Bienvenido<h1>');
 })
 
-app.use(vProducts)
+app.use(rViewProducts);
 app.use('/api/products',rProducts);
 app.use('/api/carts',rCarts)
 

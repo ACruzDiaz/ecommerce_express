@@ -89,13 +89,7 @@ export default class mwValidate {
       if(requiredKeys.length !== 0){
         throw new ValidationError(`Hacen falta los parametros ${requiredKeys.toString()}`);
       }
-      //Validar que los tipos de datos sean los correctos
-      
-  
-      // if(typeof el.id !== 'string' || el.id.length === 0) {
-      //   throw new ValidationError("Error en el campo id");
-        
-      // }else 
+
       if(typeof el.quantity !== 'number' || !Number.isInteger(el.quantity) || el.quantity <= 0){
         throw new ValidationError("Error en el campo quantity");
   
@@ -106,6 +100,29 @@ export default class mwValidate {
 
   }
 
-  
+  updateMany(array){
+    const expectedKeys = [ 'code', 'quantity' ]
+    try {
+      
+      if(!Array.isArray(array)){
+        throw new Error("Ingrese un array valido de productos.");
+        
+      }
+      if(array.length === 0){
+        throw new Error("Datos insuficientes. Revise que su lista de productos no este vácia.");
+      }
+      for (const el of array) {
+        let keys = Object.keys(el)
+        const sonIguales = keys.length === expectedKeys.length && keys.sort().every((value, index) => value === expectedKeys.sort()[index]);
+        if(!sonIguales){
+          throw new Error(`Datos invalidos. Compruebe que ha indicado los campos "code" (id del producto) y "quantity"`);
+        }
+        
+      }
+    } catch (error) {
+      throw new Error(error.message);
+      
+    }
+  }
 }
 

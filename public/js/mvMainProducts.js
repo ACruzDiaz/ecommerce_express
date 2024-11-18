@@ -44,9 +44,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const _prevPage = document.getElementById('prevPage');
   const _add2Cart = document.getElementsByClassName('add2Cart');
 
-  socket.on('productos',(req)=>{
-    _mainTable.innerHTML = insertProducts(req).innerHTML;
-  })
+  // socket.on('productos',(req)=>{
+  //   _mainTable.innerHTML = insertProducts(req).innerHTML;
+  // })
   const handleData = async (url)=>{
     try {
       const response = await fetch(url)
@@ -79,16 +79,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
         'Content-Type': 'application/json'
       },
     }
-    dataState = await handleData(url);
-    if(_prevPage && _nextPage){
-      dataState.hasPrevPage ? _prevPage.disabled = false : _prevPage.disabled = true
-      dataState.hasNextPage ? _nextPage.disabled = false : _nextPage.disabled = true  
-    }
-    if (_mainTable) {
-      _mainTable.innerHTML = insertProducts(dataState.payload).innerHTML;
-      
-    }
-
 
     cid = localStorage.getItem('cid')
     if(!cid){
@@ -117,35 +107,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
   setData(URL_SERVER + 'products');
 
   document.addEventListener('click', (el)=>{
-    if(el.target.id === 'nextPage'){
-      el.preventDefault();
-      if (!dataState) {
-        message('Error', 'No hay datos')
-        return;
-      }
-      if (dataState.hasNextPage) {
-        _nextPage.enabled = true
-        setData(dataState.nextLink)
-      }
 
-    }
-
-    if(el.target.id === 'prevPage'){
-      el.preventDefault();
-      if (!dataState) {
-        message('Error', 'No hay datos')
-        return;
-      }
-      if(dataState.hasPrevPage){
-        setData(dataState.prevLink)
-      }
-    }
 
     if(el.target.className == 'add2Cart'){
       el.preventDefault();
       let pid = null;
-      console.log(el.target.id);
-      if (!el.target.id) {
+      if (!el.target.id || el.target.id == '' ) {
         pid = el.target.parentNode.parentNode.querySelector('.pid').querySelector('a').textContent;
         
       }else{

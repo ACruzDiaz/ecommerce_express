@@ -3,27 +3,21 @@ import hCart from "../handler/hCart.js"
 const router = Router({caseSensitive:true});
 
 router.get(`/:cid`, (req,res)=>{
-  const cart = new hCart(req,res);
-  cart.get();
-}); //get ONE item
+  hCart.get(req,res);
+}); 
 router.post(`/:cid/product/:pid`, (req, res)=>{
-  const cart = new hCart(req,res);
-  cart.add();
-}); //add ONE item
+  hCart.add(req,res);
+}); 
 router.post('/',(req,res)=>{
-  const cart = new hCart(req,res);
-  cart.create();
-}); // crear el carrito
+  hCart.create(req,res);
+}); 
 router.put('/:cid', (req,res)=>{
-  const cart = new hCart(req,res)
-  cart.updateManyProducts()
+  hCart.updateManyProducts(req,res); 
 })
 router.delete('/:cid/products/:pid', (req,res)=>{
-  const cart = new hCart(req,res);
-  cart.deleteOneProduct()
+  hCart.deleteOneProduct(req,res);
 })
 router.delete('/:cid', (req,res) => {
-  const cart = new hCart(req,res)
-  cart.deleteAll();
+  hCart.deleteAll(req,res);
 })
 export default router

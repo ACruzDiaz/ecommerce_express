@@ -18,10 +18,10 @@
       </tr>
     </thead>
     <tbody id="mainTable">
-    {{#each allProducts}}
+    {{#each allProducts.payload}}
       <tr id="insertTable">
         <th>{{@index}}</th>
-        <th>{{this._id}}</th>
+        <th class = "pid"> <a href = "http://localhost:8080/products/{{this._id}}">{{this._id}}</a></th>
         <th>{{this.title}}</th>
         <th>{{this.description}}</th>
         <th>{{this.code}}</th>
@@ -29,13 +29,18 @@
         <th>{{this.status}}</th>
         <th>{{this.stock}}</th>
         <th>{{this.category}}</th>
+        <th><button class = "add2Cart"> Agregar al carrito </button></th>
       </tr>
     {{/each}}
     </tbody>
   </table>
   </div>
-  <button type="button" id="prevPage">Anterior</button>
-  <button type="button" id="nextPage">Siguiente</button>
+  {{#if allProducts.hasPrevPage}}
+    <button type="button" id="prevPage">Anterior</button>
+  {{/if}}
+  {{#if allProducts.hasNextPage}}
+    <button type="button" id="nextPage">Siguiente</button>
+  {{/if}}
   </section>
   <form id="productsForm">
     <section id="addProduct">

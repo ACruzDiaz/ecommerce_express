@@ -2,31 +2,25 @@ import { Router } from "express";
 import hProduct from "../handler/hProduct.js";
 const route = Router();
 
-
 route.get(`/:pid`, (req,res)=>{
-  const product = new hProduct(req,res);
-  product.get();
+  hProduct.get(req,res);
 }); 
 
 route.get(`/`, (req,res)=>{
-  const product = new hProduct(req,res);
-  product.getAll();
+  hProduct.getAll(req,res);
 });
 
 route.post(`/`, (req, res)=>{
-  const product = new hProduct(req,res);
-  product.add();
+  hProduct.add(req,res);
 
 });
 
 route.put(`/:pid`, (req,res)=>{
-  const product = new hProduct(req,res);
-  product.update();
+  hProduct.update(req,res);
 }); 
 
 route.delete(`/:pid`, (req, res)=>{
-  const product = new hProduct(req,res);
-  product.delete();
+  hProduct.delete(req,res);
 })
 
 export default route
